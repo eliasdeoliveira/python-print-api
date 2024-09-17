@@ -6,6 +6,7 @@ import win32api
 import win32con
 import json
 import textwrap  # Para quebra de linha automática
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -15,6 +16,9 @@ def format_json_to_table(data):
     try:
         # Verifica se 'header' está presente no JSON
         divider = '=' * 39
+        divider2 = '_' * 39
+        lines.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        lines.append(divider2)
         if 'header' in data:
             header = data['header']
             lines.append(header.get('companyName', 'Nome da Empresa'))
@@ -44,6 +48,7 @@ def format_json_to_table(data):
             # Ajuste '40' para a largura da sua impressora
             lines.append("PRODUTOS".center(50))
             lines.append(divider)
+            count = 0
             for item in data['items']:
                 # lines.append(f"# {item.get('index', ''):<5} {item.get('productName', ''):<20} {item.get('productColor', ''):<10} {
                 #  item.get('productSize', ''):<10} {item.get('quantity', ''):<5} {item.get('totalPrice', ''):<10}")
@@ -65,11 +70,13 @@ def format_json_to_table(data):
                         f"Total: R$: {item.get('totalPrice', ''):<10} ")
 
                 # Itens adicionais
-                if 'additionalItems' in item and isinstance(item['additionalItems'], list):
+                if 'additionalItems' in item and isinstance(item['additionalItems'], list) and len(item['additionalItems']) > 0:
                     # Pula duas linhas
                     lines.append("\n.")  # Linha em branco
-                    lines.append("ADICIONAIS:")
+                    lines.append("ADICIONAIS")
                     for additional in item['additionalItems']:
+                        lines.append(f"# {additional.get('index', '')}) {
+                             additional.get('productName', '')}")
                         if (additional.get('productColor')):
                             lines.append(
                                 f"Cor: {additional.get('productColor', ''):<10} ")
@@ -85,7 +92,9 @@ def format_json_to_table(data):
                         if (additional.get('totalPrice')):
                             lines.append(
                                 f"Total: R$: {additional.get('totalPrice', ''):<10} ")
-
+                count += 1
+                if(count < len(data['items'])):
+                    lines.append(divider2 + "\n.")  # Linha em branco
         # Verifica se 'paymentDetails' está presente
         if 'paymentDetails' in data:
             lines.append(divider)
@@ -125,6 +134,8 @@ def format_json_to_table(data):
                     'change', 'Não especificado')}")
 
         # Finaliza a impressão
+        lines.append("AGRADECEMOS A PREFERÊNCIA.".center(30))
+        lines.append("\x1D\x56\x00")  # Eject paper
         # lines.append("\x1D\x56\x00")  # Eject paper
 
     except Exception as e:
@@ -135,7 +146,7 @@ def format_json_to_table(data):
     return "\n".join(lines)
 
 
-def print_text(text, printer_name, font_size, margins):
+def print_text(text, printer_name, font_size, margins, type):
     try:
         # Abre a impressora especificada
         hprinter = win32print.OpenPrinter(printer_name)
@@ -220,12 +231,16 @@ def printRouter():
         return jsonify({'error': 'No data provided'}), 400
 
     try:
-        text = format_json_to_table((data)['text'])
         printer_name = data.get('printer_name', win32print.GetDefaultPrinter())
         font_size = data.get('font_size', 12)
         margins = data.get('margins', {})
-
-        print_text(text, printer_name, font_size, margins)
+        if(data.get('type') == 'cupom'):
+            text = format_json_to_table(data['text'])
+            print_text(text, printer_name, font_size, margins, data['type'])
+        else:
+            lines = []
+            lines.append(data['text'])
+            print_text(lines, printer_name, font_size, margins, data['type'])
         return jsonify({'status': 'success'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500

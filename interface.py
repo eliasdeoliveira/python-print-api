@@ -130,7 +130,7 @@ class MainWindow(QMainWindow):
         self.printer_combo.addItems(printer_names)
 
     def print_text(self):
-        text = '{ "width": "58mm", "padding": "1mm", "header": { "companyName": "Gestor Ninja", "title": "Exemplo de Cupom Fiscal" }, "items": [ { "index": 1, "productName": "Nome do Produto", "productColor": "Cor do Produto", "productSize": "Tamanho do Produto", "quantity": 1, "totalPrice": "R$ 00,00", "additionalItems": [ { "index": 1, "productName": "Nome do Adicional", "productColor": "Cor do Adicional", "productSize": "Tamanho do Adicional", "quantity": 1, "totalPrice": "R$ 00,00" } ] }, { "index": 1, "productName": "Nome do Produto", "productColor": "Cor do Produto", "productSize": "Tamanho do Produto", "quantity": 1, "totalPrice": "R$ 00,00", "additionalItems": [ { "index": 1, "productName": "Nome do Adicional", "productColor": "Cor do Adicional", "productSize": "Tamanho do Adicional", "quantity": 1, "totalPrice": "R$ 00,00" }, { "index": 1, "productName": "Nome do Adicional", "productColor": "Cor do Adicional", "productSize": "Tamanho do Adicional", "quantity": 1, "totalPrice": "R$ 00,00" } ] } ], "paymentDetails": { "paymentForm": "Forma de Pagamento", "paymentMethod": "Método de Pagamento", "total": "R$ 00,00", "cashDepositAmount": "R$ 00,00", "numberInstallments": 1, "discount": "R$ 00,00", "finalAmount": "R$ 00,00", "change": "R$ 00,00" } }'
+        text = '{ "data": { "font_size": 25, "printer_name": "POS58 10.0.0.6", "type": "text", "text": "Teste" } }'
         printer_name = self.printer_combo.currentText()
         font_size = int(self.font_size_combo.currentText())
         margins = {
