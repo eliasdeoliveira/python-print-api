@@ -24,7 +24,8 @@ def format_json_to_table(data):
             if (header.get('numberOrder')):
                 # Adiciona o divisor e a quebra de linha juntos
                 lines.append(divider)
-                lines.append(f"Número do Pedido: {header.get('numberOrder')}".capitalize())
+                lines.append(f"Número do Pedido: {
+                             header.get('numberOrder')}".capitalize())
         else:
             # lines.append('Nome da Empresa')
             lines.append('CUPOM NÃO FISCAL'.center(50))
@@ -123,10 +124,8 @@ def format_json_to_table(data):
                 lines.append(f"Troco: {payment.get(
                     'change', 'Não especificado')}")
 
-        lines.append(divider)  # Linha de separação
-
         # Finaliza a impressão
-        lines.append("\x1D\x56\x00")  # Eject paper
+        # lines.append("\x1D\x56\x00")  # Eject paper
 
     except Exception as e:
         print(f"Error in format_json_to_table: {e}")
@@ -213,12 +212,15 @@ def string_to_json(json_string):
 
 @app.route('/print', methods=['POST'])
 def printRouter():
-    data = request.json
+    print('Print request received')
+    body = request.json 
+    print('### body: ', body)
+    data = body['data']
     if not data:
         return jsonify({'error': 'No data provided'}), 400
 
     try:
-        text = format_json_to_table(data['text'])
+        text = format_json_to_table((data)['text'])
         printer_name = data.get('printer_name', win32print.GetDefaultPrinter())
         font_size = data.get('font_size', 12)
         margins = data.get('margins', {})
