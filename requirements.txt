@@ -1,0 +1,4 @@
+Flask==2.3.2
+pywin32==306
+pyqt5==5.15.9
+requests==2.31.0
