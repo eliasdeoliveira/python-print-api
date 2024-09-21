@@ -7,6 +7,7 @@ import win32con
 import json
 import textwrap  # Para quebra de linha automática
 from datetime import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -220,8 +221,10 @@ def string_to_json(json_string):
         print(f"Unexpected error: {e}")
         return None
 
+# CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST"])
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.route('/print', methods=['POST'])
+@app.route('/printer', methods=['POST'])
 def printRouter():
     print('Print request received')
     body = request.json 
@@ -252,4 +255,5 @@ def status():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
