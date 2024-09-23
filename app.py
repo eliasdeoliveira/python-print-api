@@ -69,7 +69,9 @@ def format_json_to_table(data):
                 if (item.get('totalPrice')):
                     lines.append(
                         f"Total: R$: {item.get('totalPrice', ''):<10} ")
-
+                if (item.get('observations')):
+                    lines.append(f"Observações: {
+                                 item.get('observations', '')}")
                 # Itens adicionais
                 if 'additionalItems' in item and isinstance(item['additionalItems'], list) and len(item['additionalItems']) > 0:
                     # Pula duas linhas
@@ -77,7 +79,7 @@ def format_json_to_table(data):
                     lines.append("ADICIONAIS")
                     for additional in item['additionalItems']:
                         lines.append(f"# {additional.get('index', '')}) {
-                             additional.get('productName', '')}")
+                            additional.get('productName', '')}")
                         if (additional.get('productColor')):
                             lines.append(
                                 f"Cor: {additional.get('productColor', ''):<10} ")
@@ -93,8 +95,11 @@ def format_json_to_table(data):
                         if (additional.get('totalPrice')):
                             lines.append(
                                 f"Total: R$: {additional.get('totalPrice', ''):<10} ")
+                        if (additional.get('observations')):
+                            lines.append(
+                                f"Observações: {additional.get('observations', ''):<10} ")
                 count += 1
-                if(count < len(data['items'])):
+                if (count < len(data['items'])):
                     lines.append(divider2 + "\n.")  # Linha em branco
         # Verifica se 'paymentDetails' está presente
         if 'paymentDetails' in data:
@@ -221,13 +226,15 @@ def string_to_json(json_string):
         print(f"Unexpected error: {e}")
         return None
 
+
 # CORS(app, resources={r"/*": {"origins": "*"}}, methods=["GET", "POST"])
 CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 @app.route('/printer', methods=['POST'])
 def printRouter():
     print('Print request received')
-    body = request.json 
+    body = request.json
     print('### body: ', body)
     data = body['data']
     if not data:
@@ -237,7 +244,7 @@ def printRouter():
         printer_name = data.get('printer_name', win32print.GetDefaultPrinter())
         font_size = data.get('font_size', 12)
         margins = data.get('margins', {})
-        if(data.get('type') == 'cupom'):
+        if (data.get('type') == 'cupom'):
             text = format_json_to_table(data['text'])
             print_text(text, printer_name, font_size, margins, data['type'])
         else:
