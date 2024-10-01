@@ -255,6 +255,9 @@ def printRouter():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({'message': 'Welcome to the home page!'}), 200
 
 @app.route('/status', methods=['GET'])
 def status():
@@ -263,4 +266,4 @@ def status():
 
 if __name__ == '__main__':
     # app.run(debug=True)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
